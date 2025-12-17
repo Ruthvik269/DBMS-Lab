@@ -3,33 +3,41 @@ create database enrollment;
 use enrollment;
 
 create table Student(
-	regno varchar(13) primary key,
-	name varchar(25) not null,
-	major varchar(25) not null,
-	bdate date not null
+regno varchar(13) primary key,
+name varchar(25) not null,
+major varchar(25) not null,
+bdate date not null
 );
 
 create table Course(
-	course int primary key,
-	cname varchar(30) not null,
-	dept varchar(100) not null
+course int primary key,
+cname varchar(30) not null,
+dept varchar(100) not null
 );
 
 create table Enroll(
-	regno varchar(13),
-	course int,
-	sem int not null,
-	marks int not null,
-	foreign key(regno) references Student(regno) on delete cascade,
-	foreign key(course) references Course(course) on delete cascade
+regno varchar(13),
+course int,
+sem int not null,
+marks int not null,
+foreign key(regno) references Student(regno) on delete cascade,
+foreign key(course) references Course(course) on delete cascade
+);
+
+create table TextBook(
+bookIsbn int not null,
+book_title varchar(40) not null,
+publisher varchar(25) not null,
+author varchar(25) not null,
+primary key(bookIsbn)
 );
 
 create table BookAdoption(
-	course int not null,
-	sem int not null,
-	bookIsbn int not null,
-	foreign key(bookIsbn) references TextBook(bookIsbn) on delete cascade,
-	foreign key(course) references Course(course) on delete cascade
+course int not null,
+sem int not null,
+bookIsbn int not null,
+foreign key(bookIsbn) references TextBook(bookIsbn) on delete cascade,
+foreign key(course) references Course(course) on delete cascade
 );
 
 INSERT INTO Student VALUES
@@ -53,6 +61,13 @@ INSERT INTO Enroll VALUES
 ("01HF653", 004, 3, 80),
 ("01HF234", 005, 5, 75);
 
+INSERT INTO TextBook VALUES
+(241563, "Operating Systems", "Pearson", "Silberschatz"),
+(532678, "Complete Works of Shakesphere", "Oxford", "Shakesphere"),
+(453723, "Immanuel Kant", "Delphi Classics", "Immanuel Kant"),
+(278345, "History of the world", "The Times", "Richard Overy"),
+(426784, "Behavioural Economics", "Pearson", "David Orrel");
+
 INSERT INTO BookAdoption VALUES
 (001, 5, 241563),
 (002, 6, 532678),
@@ -65,6 +80,7 @@ select * from Course;
 select * from Enroll;
 select * from BookAdoption;
 select * from TextBook;
+
 
 
 -- Demonstrate how you add a new text book to the database and make this book be adopted by some department.
@@ -121,16 +137,16 @@ select * from CoursesOptedByStudent;
 
 -- Create a trigger that prevents a student from enrolling in a course if the marks pre_requisit is less than 40
 DELIMITER //
-create or replace trigger PreventEnrollment
-before insert on Enroll
-for each row
+CREATE TRIGGER PreventEnrollment
+BEFORE INSERT ON Enroll
+FOR EACH ROW
 BEGIN
-	IF (new.marks<10) THEN
-		signal sqlstate '45000' set message_text='Marks below threshold';
-	END IF;
-END;//
-
+    IF NEW.marks < 40 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Marks less than 40';
+    END IF;
+END//
 DELIMITER ;
 
+
 INSERT INTO Enroll VALUES
-("01HF235", 002, 5, 5); -- Gives error since marks is less than 10
+("01HF235", 002, 5, 5);
