@@ -1,12 +1,8 @@
--- Dropping database if it already exists
-drop database if exists student_036;
+drop database if exists student;
 
--- Creating Database
--- 036 is my USN's ending three digits. (Use your own USN here)
-create database student_036; 
-use student_036;
+create database student; 
+use student;
 
--- Creating table
 create table if not exists Student(
 	sid varchar(25) primary key,
 	name varchar(35) not null,
@@ -17,7 +13,7 @@ create table if not exists Student(
 	email varchar(50)
 );
 
--- Inserting 4 new students
+-- Inserting new students
 insert into Student values
 ("1","Paul", "CSE", 5, "Kuvempunagar", "876543219", "paul167@gmail.com"),
 ("2","Darshan", "CSE", 1, "Hebbal", "9876543210", "darshansgowda179@gmail.com"),
@@ -38,4 +34,3 @@ select * from Student where branch="CSE";
 
 -- List All Students of CSE Branch who reside in Kuvempunagar
 select * from Student where branch="CSE" and address="Kuvempunagar";
-
